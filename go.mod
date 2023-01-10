@@ -3,6 +3,7 @@ module github.com/kamp-us/pano-api
 go 1.19
 
 require (
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gosimple/slug v1.13.1 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
