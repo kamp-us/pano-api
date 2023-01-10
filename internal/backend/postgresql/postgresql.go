@@ -1,10 +1,7 @@
 package postgresql
 
-// TODO: ask umut, gorm association, cascade?
-
 import (
 	"context"
-	"time"
 
 	"github.com/gosimple/slug"
 	"github.com/kamp-us/pano-api/internal/backend"
@@ -93,93 +90,6 @@ func (b *PostgreSQLBackend) DeletePost(ctx context.Context, id string) error {
 	}
 
 	result = b.DB.Delete(&post)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	return nil
-}
-
-// TODO: we should seperate at least on folder level backend/comments,  backend/posts
-// TODO: why do we return array of pointers?
-// Comment
-func (b *PostgreSQLBackend) GetBatchComments(ctx context.Context, ids []string) ([]*models.Comment, error) {
-	// TODO: implement
-	var comments []*models.Comment
-	result := b.DB.Find(comments, ids)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	return comments, nil
-}
-
-func (b *PostgreSQLBackend) GetComments(ctx context.Context) ([]*models.Comment, error) {
-	// TODO: implement
-	var comments []*models.Comment
-	result := b.DB.Find(comments)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	return comments, nil
-}
-
-func (b *PostgreSQLBackend) CreateComment(ctx context.Context, content string, postId string, userId string, parentId *string, deletedAt *time.Time) (*models.Comment, error) {
-	comment := models.Comment{
-		Content: content,
-		PostID:  postId,
-		UserID:  userId,
-	}
-
-	// TODO: is this the way?
-	if parentId != nil {
-		comment.ParentID = *parentId
-	}
-
-	if deletedAt != nil {
-		comment.DeletedAt = *deletedAt
-	}
-
-	result := b.DB.Create(&comment)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	return &comment, nil
-}
-
-func (b *PostgreSQLBackend) UpdateComment(ctx context.Context, id string, content string) error {
-	comment := models.Comment{}
-
-	result := b.DB.First(&comment, "id = ?", id)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	updates := models.Comment{
-		Content: content,
-	}
-
-	result = b.DB.Model(&comment).Updates(updates)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	return nil
-}
-
-func (b *PostgreSQLBackend) DeleteComment(ctx context.Context, id string) error {
-	comment := models.Comment{}
-
-	result := b.DB.First(&comment, "id = ?", id)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	result = b.DB.Delete(&comment)
 	if result.Error != nil {
 		return result.Error
 	}
