@@ -20,8 +20,8 @@ func (s *PanoAPIServer) GetBatchComments(ctx context.Context, req *api.GetBatchC
 
 	var batch []*api.Comment
 	for _, model := range comments {
-		post := helper.ConvertToCommentModel(model)
-		batch = append(batch, post)
+		comment := helper.ConvertToCommentModel(model)
+		batch = append(batch, comment)
 	}
 
 	return &api.GetBatchCommentsResponse{Comments: batch}, nil
