@@ -1,9 +1,13 @@
 package models
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
+
+// TODO: ask about indexing
 
 type Post struct {
 	ID      uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
@@ -22,6 +26,8 @@ type Comment struct {
 	UserID   string
 	PostID   string
 	ParentID string
+
+	DeletedAt time.Time
 }
 
 func AutoMigrate(db *gorm.DB) error {
