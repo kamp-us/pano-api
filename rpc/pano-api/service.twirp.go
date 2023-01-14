@@ -41,6 +41,12 @@ type PanoAPI interface {
 	UpdatePost(context.Context, *UpdatePostRequest) (*UpdatePostResponse, error)
 
 	DeletePost(context.Context, *DeletePostRequest) (*DeletePostResponse, error)
+
+	GetUpvotes(context.Context, *GetUpvotesRequest) (*GetUpvotesResponse, error)
+
+	CreateUpvote(context.Context, *CreateUpvoteRequest) (*CreateUpvoteResponse, error)
+
+	DeleteUpvote(context.Context, *DeleteUpvoteRequest) (*DeleteUpvoteResponse, error)
 }
 
 // =======================
@@ -49,7 +55,7 @@ type PanoAPI interface {
 
 type panoAPIProtobufClient struct {
 	client      HTTPClient
-	urls        [5]string
+	urls        [8]string
 	interceptor twirp.Interceptor
 	opts        twirp.ClientOptions
 }
@@ -77,12 +83,15 @@ func NewPanoAPIProtobufClient(baseURL string, client HTTPClient, opts ...twirp.C
 	// Build method URLs: <baseURL>[<prefix>]/<package>.<Service>/<Method>
 	serviceURL := sanitizeBaseURL(baseURL)
 	serviceURL += baseServicePath(pathPrefix, "kampus.panoapi", "PanoAPI")
-	urls := [5]string{
+	urls := [8]string{
 		serviceURL + "GetBatchPosts",
 		serviceURL + "GetPosts",
 		serviceURL + "CreatePost",
 		serviceURL + "UpdatePost",
 		serviceURL + "DeletePost",
+		serviceURL + "GetUpvotes",
+		serviceURL + "CreateUpvote",
+		serviceURL + "DeleteUpvote",
 	}
 
 	return &panoAPIProtobufClient{
@@ -323,13 +332,151 @@ func (c *panoAPIProtobufClient) callDeletePost(ctx context.Context, in *DeletePo
 	return out, nil
 }
 
+func (c *panoAPIProtobufClient) GetUpvotes(ctx context.Context, in *GetUpvotesRequest) (*GetUpvotesResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "kampus.panoapi")
+	ctx = ctxsetters.WithServiceName(ctx, "PanoAPI")
+	ctx = ctxsetters.WithMethodName(ctx, "GetUpvotes")
+	caller := c.callGetUpvotes
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *GetUpvotesRequest) (*GetUpvotesResponse, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetUpvotesRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetUpvotesRequest) when calling interceptor")
+					}
+					return c.callGetUpvotes(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetUpvotesResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetUpvotesResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *panoAPIProtobufClient) callGetUpvotes(ctx context.Context, in *GetUpvotesRequest) (*GetUpvotesResponse, error) {
+	out := new(GetUpvotesResponse)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[5], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+func (c *panoAPIProtobufClient) CreateUpvote(ctx context.Context, in *CreateUpvoteRequest) (*CreateUpvoteResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "kampus.panoapi")
+	ctx = ctxsetters.WithServiceName(ctx, "PanoAPI")
+	ctx = ctxsetters.WithMethodName(ctx, "CreateUpvote")
+	caller := c.callCreateUpvote
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *CreateUpvoteRequest) (*CreateUpvoteResponse, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*CreateUpvoteRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*CreateUpvoteRequest) when calling interceptor")
+					}
+					return c.callCreateUpvote(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*CreateUpvoteResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*CreateUpvoteResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *panoAPIProtobufClient) callCreateUpvote(ctx context.Context, in *CreateUpvoteRequest) (*CreateUpvoteResponse, error) {
+	out := new(CreateUpvoteResponse)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[6], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+func (c *panoAPIProtobufClient) DeleteUpvote(ctx context.Context, in *DeleteUpvoteRequest) (*DeleteUpvoteResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "kampus.panoapi")
+	ctx = ctxsetters.WithServiceName(ctx, "PanoAPI")
+	ctx = ctxsetters.WithMethodName(ctx, "DeleteUpvote")
+	caller := c.callDeleteUpvote
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *DeleteUpvoteRequest) (*DeleteUpvoteResponse, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*DeleteUpvoteRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*DeleteUpvoteRequest) when calling interceptor")
+					}
+					return c.callDeleteUpvote(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*DeleteUpvoteResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*DeleteUpvoteResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *panoAPIProtobufClient) callDeleteUpvote(ctx context.Context, in *DeleteUpvoteRequest) (*DeleteUpvoteResponse, error) {
+	out := new(DeleteUpvoteResponse)
+	ctx, err := doProtobufRequest(ctx, c.client, c.opts.Hooks, c.urls[7], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
 // ===================
 // PanoAPI JSON Client
 // ===================
 
 type panoAPIJSONClient struct {
 	client      HTTPClient
-	urls        [5]string
+	urls        [8]string
 	interceptor twirp.Interceptor
 	opts        twirp.ClientOptions
 }
@@ -357,12 +504,15 @@ func NewPanoAPIJSONClient(baseURL string, client HTTPClient, opts ...twirp.Clien
 	// Build method URLs: <baseURL>[<prefix>]/<package>.<Service>/<Method>
 	serviceURL := sanitizeBaseURL(baseURL)
 	serviceURL += baseServicePath(pathPrefix, "kampus.panoapi", "PanoAPI")
-	urls := [5]string{
+	urls := [8]string{
 		serviceURL + "GetBatchPosts",
 		serviceURL + "GetPosts",
 		serviceURL + "CreatePost",
 		serviceURL + "UpdatePost",
 		serviceURL + "DeletePost",
+		serviceURL + "GetUpvotes",
+		serviceURL + "CreateUpvote",
+		serviceURL + "DeleteUpvote",
 	}
 
 	return &panoAPIJSONClient{
@@ -603,6 +753,144 @@ func (c *panoAPIJSONClient) callDeletePost(ctx context.Context, in *DeletePostRe
 	return out, nil
 }
 
+func (c *panoAPIJSONClient) GetUpvotes(ctx context.Context, in *GetUpvotesRequest) (*GetUpvotesResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "kampus.panoapi")
+	ctx = ctxsetters.WithServiceName(ctx, "PanoAPI")
+	ctx = ctxsetters.WithMethodName(ctx, "GetUpvotes")
+	caller := c.callGetUpvotes
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *GetUpvotesRequest) (*GetUpvotesResponse, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetUpvotesRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetUpvotesRequest) when calling interceptor")
+					}
+					return c.callGetUpvotes(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetUpvotesResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetUpvotesResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *panoAPIJSONClient) callGetUpvotes(ctx context.Context, in *GetUpvotesRequest) (*GetUpvotesResponse, error) {
+	out := new(GetUpvotesResponse)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[5], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+func (c *panoAPIJSONClient) CreateUpvote(ctx context.Context, in *CreateUpvoteRequest) (*CreateUpvoteResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "kampus.panoapi")
+	ctx = ctxsetters.WithServiceName(ctx, "PanoAPI")
+	ctx = ctxsetters.WithMethodName(ctx, "CreateUpvote")
+	caller := c.callCreateUpvote
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *CreateUpvoteRequest) (*CreateUpvoteResponse, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*CreateUpvoteRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*CreateUpvoteRequest) when calling interceptor")
+					}
+					return c.callCreateUpvote(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*CreateUpvoteResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*CreateUpvoteResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *panoAPIJSONClient) callCreateUpvote(ctx context.Context, in *CreateUpvoteRequest) (*CreateUpvoteResponse, error) {
+	out := new(CreateUpvoteResponse)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[6], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
+func (c *panoAPIJSONClient) DeleteUpvote(ctx context.Context, in *DeleteUpvoteRequest) (*DeleteUpvoteResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "kampus.panoapi")
+	ctx = ctxsetters.WithServiceName(ctx, "PanoAPI")
+	ctx = ctxsetters.WithMethodName(ctx, "DeleteUpvote")
+	caller := c.callDeleteUpvote
+	if c.interceptor != nil {
+		caller = func(ctx context.Context, req *DeleteUpvoteRequest) (*DeleteUpvoteResponse, error) {
+			resp, err := c.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*DeleteUpvoteRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*DeleteUpvoteRequest) when calling interceptor")
+					}
+					return c.callDeleteUpvote(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*DeleteUpvoteResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*DeleteUpvoteResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+	return caller(ctx, in)
+}
+
+func (c *panoAPIJSONClient) callDeleteUpvote(ctx context.Context, in *DeleteUpvoteRequest) (*DeleteUpvoteResponse, error) {
+	out := new(DeleteUpvoteResponse)
+	ctx, err := doJSONRequest(ctx, c.client, c.opts.Hooks, c.urls[7], in, out)
+	if err != nil {
+		twerr, ok := err.(twirp.Error)
+		if !ok {
+			twerr = twirp.InternalErrorWith(err)
+		}
+		callClientError(ctx, c.opts.Hooks, twerr)
+		return nil, err
+	}
+
+	callClientResponseReceived(ctx, c.opts.Hooks)
+
+	return out, nil
+}
+
 // ======================
 // PanoAPI Server Handler
 // ======================
@@ -714,6 +1002,15 @@ func (s *panoAPIServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	case "DeletePost":
 		s.serveDeletePost(ctx, resp, req)
+		return
+	case "GetUpvotes":
+		s.serveGetUpvotes(ctx, resp, req)
+		return
+	case "CreateUpvote":
+		s.serveCreateUpvote(ctx, resp, req)
+		return
+	case "DeleteUpvote":
+		s.serveDeleteUpvote(ctx, resp, req)
 		return
 	default:
 		msg := fmt.Sprintf("no handler for path %q", req.URL.Path)
@@ -1622,6 +1919,546 @@ func (s *panoAPIServer) serveDeletePostProtobuf(ctx context.Context, resp http.R
 	callResponseSent(ctx, s.hooks)
 }
 
+func (s *panoAPIServer) serveGetUpvotes(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	header := req.Header.Get("Content-Type")
+	i := strings.Index(header, ";")
+	if i == -1 {
+		i = len(header)
+	}
+	switch strings.TrimSpace(strings.ToLower(header[:i])) {
+	case "application/json":
+		s.serveGetUpvotesJSON(ctx, resp, req)
+	case "application/protobuf":
+		s.serveGetUpvotesProtobuf(ctx, resp, req)
+	default:
+		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		twerr := badRouteError(msg, req.Method, req.URL.Path)
+		s.writeError(ctx, resp, twerr)
+	}
+}
+
+func (s *panoAPIServer) serveGetUpvotesJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "GetUpvotes")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	d := json.NewDecoder(req.Body)
+	rawReqBody := json.RawMessage{}
+	if err := d.Decode(&rawReqBody); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+	reqContent := new(GetUpvotesRequest)
+	unmarshaler := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err = unmarshaler.Unmarshal(rawReqBody, reqContent); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+
+	handler := s.PanoAPI.GetUpvotes
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *GetUpvotesRequest) (*GetUpvotesResponse, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetUpvotesRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetUpvotesRequest) when calling interceptor")
+					}
+					return s.PanoAPI.GetUpvotes(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetUpvotesResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetUpvotesResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *GetUpvotesResponse
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *GetUpvotesResponse and nil error while calling GetUpvotes. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	marshaler := &protojson.MarshalOptions{UseProtoNames: !s.jsonCamelCase, EmitUnpopulated: !s.jsonSkipDefaults}
+	respBytes, err := marshaler.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal json response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *panoAPIServer) serveGetUpvotesProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "GetUpvotes")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	buf, err := io.ReadAll(req.Body)
+	if err != nil {
+		s.handleRequestBodyError(ctx, resp, "failed to read request body", err)
+		return
+	}
+	reqContent := new(GetUpvotesRequest)
+	if err = proto.Unmarshal(buf, reqContent); err != nil {
+		s.writeError(ctx, resp, malformedRequestError("the protobuf request could not be decoded"))
+		return
+	}
+
+	handler := s.PanoAPI.GetUpvotes
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *GetUpvotesRequest) (*GetUpvotesResponse, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*GetUpvotesRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*GetUpvotesRequest) when calling interceptor")
+					}
+					return s.PanoAPI.GetUpvotes(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*GetUpvotesResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*GetUpvotesResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *GetUpvotesResponse
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *GetUpvotesResponse and nil error while calling GetUpvotes. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	respBytes, err := proto.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal proto response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/protobuf")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *panoAPIServer) serveCreateUpvote(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	header := req.Header.Get("Content-Type")
+	i := strings.Index(header, ";")
+	if i == -1 {
+		i = len(header)
+	}
+	switch strings.TrimSpace(strings.ToLower(header[:i])) {
+	case "application/json":
+		s.serveCreateUpvoteJSON(ctx, resp, req)
+	case "application/protobuf":
+		s.serveCreateUpvoteProtobuf(ctx, resp, req)
+	default:
+		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		twerr := badRouteError(msg, req.Method, req.URL.Path)
+		s.writeError(ctx, resp, twerr)
+	}
+}
+
+func (s *panoAPIServer) serveCreateUpvoteJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "CreateUpvote")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	d := json.NewDecoder(req.Body)
+	rawReqBody := json.RawMessage{}
+	if err := d.Decode(&rawReqBody); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+	reqContent := new(CreateUpvoteRequest)
+	unmarshaler := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err = unmarshaler.Unmarshal(rawReqBody, reqContent); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+
+	handler := s.PanoAPI.CreateUpvote
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *CreateUpvoteRequest) (*CreateUpvoteResponse, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*CreateUpvoteRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*CreateUpvoteRequest) when calling interceptor")
+					}
+					return s.PanoAPI.CreateUpvote(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*CreateUpvoteResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*CreateUpvoteResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *CreateUpvoteResponse
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *CreateUpvoteResponse and nil error while calling CreateUpvote. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	marshaler := &protojson.MarshalOptions{UseProtoNames: !s.jsonCamelCase, EmitUnpopulated: !s.jsonSkipDefaults}
+	respBytes, err := marshaler.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal json response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *panoAPIServer) serveCreateUpvoteProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "CreateUpvote")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	buf, err := io.ReadAll(req.Body)
+	if err != nil {
+		s.handleRequestBodyError(ctx, resp, "failed to read request body", err)
+		return
+	}
+	reqContent := new(CreateUpvoteRequest)
+	if err = proto.Unmarshal(buf, reqContent); err != nil {
+		s.writeError(ctx, resp, malformedRequestError("the protobuf request could not be decoded"))
+		return
+	}
+
+	handler := s.PanoAPI.CreateUpvote
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *CreateUpvoteRequest) (*CreateUpvoteResponse, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*CreateUpvoteRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*CreateUpvoteRequest) when calling interceptor")
+					}
+					return s.PanoAPI.CreateUpvote(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*CreateUpvoteResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*CreateUpvoteResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *CreateUpvoteResponse
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *CreateUpvoteResponse and nil error while calling CreateUpvote. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	respBytes, err := proto.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal proto response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/protobuf")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *panoAPIServer) serveDeleteUpvote(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	header := req.Header.Get("Content-Type")
+	i := strings.Index(header, ";")
+	if i == -1 {
+		i = len(header)
+	}
+	switch strings.TrimSpace(strings.ToLower(header[:i])) {
+	case "application/json":
+		s.serveDeleteUpvoteJSON(ctx, resp, req)
+	case "application/protobuf":
+		s.serveDeleteUpvoteProtobuf(ctx, resp, req)
+	default:
+		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		twerr := badRouteError(msg, req.Method, req.URL.Path)
+		s.writeError(ctx, resp, twerr)
+	}
+}
+
+func (s *panoAPIServer) serveDeleteUpvoteJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "DeleteUpvote")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	d := json.NewDecoder(req.Body)
+	rawReqBody := json.RawMessage{}
+	if err := d.Decode(&rawReqBody); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+	reqContent := new(DeleteUpvoteRequest)
+	unmarshaler := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err = unmarshaler.Unmarshal(rawReqBody, reqContent); err != nil {
+		s.handleRequestBodyError(ctx, resp, "the json request could not be decoded", err)
+		return
+	}
+
+	handler := s.PanoAPI.DeleteUpvote
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *DeleteUpvoteRequest) (*DeleteUpvoteResponse, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*DeleteUpvoteRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*DeleteUpvoteRequest) when calling interceptor")
+					}
+					return s.PanoAPI.DeleteUpvote(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*DeleteUpvoteResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*DeleteUpvoteResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *DeleteUpvoteResponse
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *DeleteUpvoteResponse and nil error while calling DeleteUpvote. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	marshaler := &protojson.MarshalOptions{UseProtoNames: !s.jsonCamelCase, EmitUnpopulated: !s.jsonSkipDefaults}
+	respBytes, err := marshaler.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal json response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *panoAPIServer) serveDeleteUpvoteProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "DeleteUpvote")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	buf, err := io.ReadAll(req.Body)
+	if err != nil {
+		s.handleRequestBodyError(ctx, resp, "failed to read request body", err)
+		return
+	}
+	reqContent := new(DeleteUpvoteRequest)
+	if err = proto.Unmarshal(buf, reqContent); err != nil {
+		s.writeError(ctx, resp, malformedRequestError("the protobuf request could not be decoded"))
+		return
+	}
+
+	handler := s.PanoAPI.DeleteUpvote
+	if s.interceptor != nil {
+		handler = func(ctx context.Context, req *DeleteUpvoteRequest) (*DeleteUpvoteResponse, error) {
+			resp, err := s.interceptor(
+				func(ctx context.Context, req interface{}) (interface{}, error) {
+					typedReq, ok := req.(*DeleteUpvoteRequest)
+					if !ok {
+						return nil, twirp.InternalError("failed type assertion req.(*DeleteUpvoteRequest) when calling interceptor")
+					}
+					return s.PanoAPI.DeleteUpvote(ctx, typedReq)
+				},
+			)(ctx, req)
+			if resp != nil {
+				typedResp, ok := resp.(*DeleteUpvoteResponse)
+				if !ok {
+					return nil, twirp.InternalError("failed type assertion resp.(*DeleteUpvoteResponse) when calling interceptor")
+				}
+				return typedResp, err
+			}
+			return nil, err
+		}
+	}
+
+	// Call service method
+	var respContent *DeleteUpvoteResponse
+	func() {
+		defer ensurePanicResponses(ctx, resp, s.hooks)
+		respContent, err = handler(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *DeleteUpvoteResponse and nil error while calling DeleteUpvote. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	respBytes, err := proto.Marshal(respContent)
+	if err != nil {
+		s.writeError(ctx, resp, wrapInternal(err, "failed to marshal proto response"))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/protobuf")
+	resp.Header().Set("Content-Length", strconv.Itoa(len(respBytes)))
+	resp.WriteHeader(http.StatusOK)
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		ctx = callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
 func (s *panoAPIServer) ServiceDescriptor() ([]byte, int) {
 	return twirpFileDescriptor0, 0
 }
@@ -2203,38 +3040,49 @@ func callClientError(ctx context.Context, h *twirp.ClientHooks, err twirp.Error)
 }
 
 var twirpFileDescriptor0 = []byte{
-	// 514 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x54, 0xdf, 0x8b, 0xd3, 0x40,
-	0x10, 0x26, 0x4d, 0xd2, 0xea, 0x1c, 0xf7, 0xa3, 0x4b, 0xd4, 0x50, 0x44, 0x6b, 0x54, 0x28, 0x82,
-	0x09, 0x54, 0xf0, 0xf1, 0xc4, 0x3b, 0xe1, 0xb8, 0x07, 0xa1, 0xe4, 0xd0, 0x07, 0x11, 0x24, 0xd7,
-	0x4c, 0xeb, 0x62, 0x2e, 0xbb, 0x66, 0x37, 0xfa, 0x17, 0xf8, 0x27, 0xf9, 0xec, 0xbf, 0x26, 0xbb,
-	0x69, 0xc8, 0x8f, 0xed, 0xb5, 0x70, 0x6f, 0x99, 0xd9, 0x6f, 0xbe, 0x99, 0xf9, 0xe6, 0x23, 0x30,
-	0x29, 0xf8, 0x32, 0xe2, 0x49, 0xce, 0x5e, 0x27, 0x9c, 0x46, 0x02, 0x8b, 0x5f, 0x74, 0x89, 0x21,
-	0x2f, 0x98, 0x64, 0xe4, 0xe8, 0x47, 0x72, 0xc3, 0x4b, 0x11, 0xaa, 0xe7, 0x84, 0xd3, 0xc9, 0x93,
-	0x35, 0x63, 0xeb, 0x0c, 0x23, 0xfd, 0x7a, 0x5d, 0xae, 0xa2, 0xdf, 0x45, 0xc2, 0x39, 0x16, 0xa2,
-	0xc2, 0x07, 0x7f, 0x2c, 0x70, 0x16, 0x4c, 0x48, 0x72, 0x04, 0x03, 0x9a, 0xfa, 0xd6, 0xd4, 0x9a,
-	0xdd, 0x8f, 0x07, 0x34, 0x25, 0x1e, 0xb8, 0x92, 0xca, 0x0c, 0xfd, 0x81, 0x4e, 0x55, 0x01, 0x39,
-	0x01, 0xbb, 0x2c, 0x32, 0xdf, 0xd6, 0x39, 0xf5, 0x49, 0x7c, 0x18, 0x2d, 0x59, 0x2e, 0x31, 0x97,
-	0xbe, 0xa3, 0xb3, 0x75, 0x48, 0x08, 0x38, 0x22, 0x2b, 0xd7, 0xbe, 0xab, 0xd3, 0xfa, 0x9b, 0x3c,
-	0x82, 0x51, 0x29, 0xb0, 0xf8, 0x46, 0x53, 0x7f, 0xa8, 0xd3, 0x43, 0x15, 0x5e, 0xa6, 0xc1, 0x0c,
-	0xbc, 0x0b, 0x94, 0x67, 0x89, 0x5c, 0x7e, 0x57, 0xe3, 0x88, 0x18, 0x7f, 0x96, 0x28, 0xa4, 0x6a,
-	0x48, 0x53, 0xe1, 0x5b, 0x53, 0x5b, 0x35, 0xa4, 0xa9, 0x08, 0xce, 0xe1, 0x41, 0x0f, 0x29, 0x38,
-	0xcb, 0x05, 0x92, 0x57, 0xe0, 0x72, 0x95, 0xd0, 0xe0, 0x83, 0xb9, 0x17, 0x76, 0xa5, 0x08, 0x15,
-	0x3a, 0xae, 0x20, 0xc1, 0x3b, 0x38, 0xbe, 0x40, 0xd9, 0xe9, 0xe4, 0x81, 0x9b, 0xd1, 0x1b, 0x2a,
-	0xb5, 0x06, 0x6e, 0x5c, 0x05, 0xe4, 0x21, 0x0c, 0xd9, 0x6a, 0x25, 0x50, 0x6a, 0x1d, 0xdc, 0x78,
-	0x13, 0x05, 0xa7, 0x70, 0xd2, 0x10, 0xdc, 0x61, 0x80, 0x1c, 0xc6, 0xe7, 0x05, 0x26, 0x12, 0x75,
-	0xb2, 0x19, 0xa1, 0xd2, 0xdc, 0xda, 0xa2, 0xf9, 0x60, 0xab, 0xe6, 0x76, 0x57, 0xf3, 0x96, 0xbe,
-	0x4e, 0x47, 0xdf, 0x53, 0x20, 0xed, 0x7e, 0x9b, 0x89, 0x67, 0xe0, 0xa8, 0x71, 0x74, 0xbf, 0xdb,
-	0x06, 0xd6, 0x88, 0xe0, 0x9f, 0x05, 0xe3, 0x4f, 0x3c, 0xed, 0x0d, 0xdc, 0x37, 0xcd, 0xbc, 0x6d,
-	0x9a, 0x83, 0xf9, 0xe3, 0xb0, 0x72, 0x5f, 0x58, 0xbb, 0x2f, 0xbc, 0x92, 0x05, 0xcd, 0xd7, 0x9f,
-	0x93, 0xac, 0xc4, 0x7a, 0xbd, 0xb0, 0xb1, 0xd4, 0xbe, 0x0a, 0xbd, 0xfc, 0xdb, 0xae, 0xe1, 0xf6,
-	0xd5, 0xd4, 0xe0, 0xc0, 0x03, 0xd2, 0x5e, 0xa0, 0x52, 0x20, 0x78, 0x0e, 0xe3, 0x0f, 0x98, 0xe1,
-	0xce, 0xb5, 0x54, 0x69, 0x1b, 0x54, 0x95, 0xce, 0xff, 0xda, 0x30, 0x5a, 0x24, 0x39, 0x7b, 0xbf,
-	0xb8, 0x24, 0x5f, 0xe1, 0xb0, 0x63, 0x4a, 0xf2, 0xa2, 0xaf, 0xe5, 0x36, 0x77, 0x4f, 0x5e, 0xee,
-	0x41, 0x6d, 0xce, 0xf4, 0x11, 0xee, 0xd5, 0x66, 0x23, 0x4f, 0xb7, 0x94, 0x74, 0x38, 0xa7, 0xb7,
-	0x03, 0x36, 0x74, 0x57, 0x00, 0x8d, 0x17, 0xc8, 0xb3, 0x3e, 0xde, 0xf0, 0xe5, 0x24, 0xd8, 0x05,
-	0x69, 0x48, 0x1b, 0x79, 0x4d, 0x52, 0xc3, 0x3b, 0x26, 0xa9, 0x79, 0x1d, 0x45, 0xda, 0x08, 0x6f,
-	0x92, 0x1a, 0x97, 0x33, 0x49, 0xcd, 0xbb, 0x9d, 0x1d, 0x7f, 0x39, 0x8c, 0xda, 0x7f, 0xd0, 0xeb,
-	0xa1, 0x36, 0xce, 0x9b, 0xff, 0x01, 0x00, 0x00, 0xff, 0xff, 0xa9, 0x06, 0x1b, 0x92, 0x58, 0x05,
-	0x00, 0x00,
+	// 689 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x56, 0x6d, 0x6b, 0xd4, 0x4c,
+	0x14, 0x25, 0xbb, 0x9b, 0xdd, 0xf6, 0xf6, 0xe9, 0xcb, 0xce, 0x13, 0x6b, 0x58, 0xc5, 0xd6, 0xb4,
+	0x42, 0x11, 0xcc, 0xca, 0x0a, 0x7e, 0xac, 0xd8, 0x4a, 0x4b, 0x3f, 0x08, 0x75, 0x6b, 0x05, 0x45,
+	0x90, 0x74, 0x33, 0x5d, 0x07, 0xd3, 0x64, 0xcc, 0x4c, 0x2a, 0xfd, 0x01, 0xfe, 0x2e, 0xfd, 0x69,
+	0x32, 0x2f, 0x6b, 0x32, 0x99, 0xec, 0x16, 0x44, 0xfc, 0x96, 0xb9, 0x73, 0xe6, 0xdc, 0x3b, 0x67,
+	0xce, 0xbd, 0x04, 0x06, 0x39, 0x9d, 0x0c, 0x69, 0x94, 0x66, 0x4f, 0x22, 0x4a, 0x86, 0x0c, 0xe7,
+	0xd7, 0x64, 0x82, 0x43, 0x9a, 0x67, 0x3c, 0x43, 0x6b, 0x5f, 0xa2, 0x2b, 0x5a, 0xb0, 0x50, 0x6c,
+	0x47, 0x94, 0x0c, 0x1e, 0x4c, 0xb3, 0x6c, 0x9a, 0xe0, 0xa1, 0xdc, 0xbd, 0x28, 0x2e, 0x87, 0xdf,
+	0xf2, 0x88, 0x52, 0x9c, 0x33, 0x85, 0x0f, 0xbe, 0x3b, 0xd0, 0x39, 0xcd, 0x18, 0x47, 0x6b, 0xd0,
+	0x22, 0xb1, 0xef, 0x6c, 0x3b, 0x7b, 0xcb, 0xe3, 0x16, 0x89, 0x91, 0x07, 0x2e, 0x27, 0x3c, 0xc1,
+	0x7e, 0x4b, 0x86, 0xd4, 0x02, 0x6d, 0x40, 0xbb, 0xc8, 0x13, 0xbf, 0x2d, 0x63, 0xe2, 0x13, 0xf9,
+	0xd0, 0x9b, 0x64, 0x29, 0xc7, 0x29, 0xf7, 0x3b, 0x32, 0x3a, 0x5b, 0x22, 0x04, 0x1d, 0x96, 0x14,
+	0x53, 0xdf, 0x95, 0x61, 0xf9, 0x8d, 0xee, 0x42, 0xaf, 0x60, 0x38, 0xff, 0x44, 0x62, 0xbf, 0x2b,
+	0xc3, 0x5d, 0xb1, 0x3c, 0x89, 0x83, 0x3d, 0xf0, 0x8e, 0x31, 0x3f, 0x88, 0xf8, 0xe4, 0xb3, 0x28,
+	0x87, 0x8d, 0xf1, 0xd7, 0x02, 0x33, 0x2e, 0x12, 0x92, 0x98, 0xf9, 0xce, 0x76, 0x5b, 0x24, 0x24,
+	0x31, 0x0b, 0x0e, 0xe1, 0x4e, 0x0d, 0xc9, 0x68, 0x96, 0x32, 0x8c, 0x1e, 0x83, 0x4b, 0x45, 0x40,
+	0x82, 0x57, 0x46, 0x5e, 0x68, 0x4a, 0x11, 0x0a, 0xf4, 0x58, 0x41, 0x82, 0x17, 0xb0, 0x7e, 0x8c,
+	0xb9, 0x91, 0xc9, 0x03, 0x37, 0x21, 0x57, 0x84, 0x4b, 0x0d, 0xdc, 0xb1, 0x5a, 0xa0, 0x4d, 0xe8,
+	0x66, 0x97, 0x97, 0x0c, 0x73, 0xa9, 0x83, 0x3b, 0xd6, 0xab, 0x60, 0x1f, 0x36, 0x4a, 0x82, 0x3f,
+	0x28, 0x20, 0x85, 0xfe, 0x61, 0x8e, 0x23, 0x8e, 0x65, 0xb0, 0x2c, 0x41, 0x69, 0xee, 0x34, 0x68,
+	0xde, 0x6a, 0xd4, 0xbc, 0x6d, 0x6a, 0x5e, 0xd1, 0xb7, 0x63, 0xe8, 0xbb, 0x0f, 0xa8, 0x9a, 0x4f,
+	0x57, 0xbc, 0x07, 0x1d, 0x51, 0x8e, 0xcc, 0x37, 0xaf, 0x60, 0x89, 0x08, 0x7e, 0x38, 0xd0, 0x3f,
+	0xa7, 0x71, 0xad, 0xe0, 0xba, 0x69, 0x46, 0x55, 0xd3, 0xac, 0x8c, 0xee, 0x87, 0xca, 0x7d, 0xe1,
+	0xcc, 0x7d, 0xe1, 0x19, 0xcf, 0x49, 0x3a, 0x7d, 0x17, 0x25, 0x05, 0x9e, 0x5d, 0x2f, 0x2c, 0x2d,
+	0x75, 0xdb, 0x09, 0x79, 0xf9, 0xe7, 0xa6, 0xe1, 0x6e, 0x3b, 0x33, 0x03, 0x07, 0x1e, 0xa0, 0xea,
+	0x05, 0x94, 0x02, 0xc1, 0x0e, 0xf4, 0x5f, 0xe1, 0x04, 0x2f, 0xbc, 0x96, 0x38, 0x5a, 0x05, 0xe9,
+	0xa3, 0x19, 0x74, 0xcf, 0xe9, 0x75, 0xc6, 0xb1, 0x25, 0xc3, 0x3d, 0x58, 0xc6, 0x29, 0x27, 0xfc,
+	0x46, 0xbc, 0x83, 0x7a, 0xb7, 0x25, 0x15, 0x38, 0x89, 0xd1, 0x16, 0xac, 0xe8, 0x4d, 0x7e, 0x43,
+	0xb1, 0x7e, 0x40, 0x50, 0xa1, 0xb7, 0x37, 0x14, 0xcf, 0x7f, 0xc3, 0x37, 0xd0, 0x3f, 0xc6, 0x5c,
+	0xe5, 0xfc, 0x6d, 0x5b, 0x23, 0x97, 0xb3, 0x38, 0x57, 0xab, 0x9e, 0x2b, 0x38, 0x02, 0x54, 0xa5,
+	0xd4, 0xb6, 0x78, 0x0a, 0xbd, 0x42, 0x85, 0xb4, 0x95, 0x37, 0xeb, 0xce, 0x50, 0x27, 0xc6, 0x33,
+	0x58, 0x90, 0xc0, 0xff, 0xca, 0x5e, 0x7a, 0xe3, 0x6f, 0x14, 0x57, 0x15, 0xa2, 0x6d, 0x08, 0x71,
+	0x04, 0x9e, 0x99, 0x4d, 0xd7, 0x1d, 0x42, 0x57, 0x15, 0xa4, 0x0d, 0x3d, 0xaf, 0x6c, 0x8d, 0x12,
+	0x55, 0xab, 0x77, 0xfd, 0x27, 0x55, 0x6f, 0x82, 0x67, 0x66, 0x53, 0x55, 0x8f, 0x7e, 0xba, 0xd0,
+	0x3b, 0x8d, 0xd2, 0xec, 0xe5, 0xe9, 0x09, 0xfa, 0x08, 0xab, 0xc6, 0x70, 0x43, 0xbb, 0xf5, 0x2b,
+	0x34, 0x4d, 0xc9, 0xc1, 0xa3, 0x5b, 0x50, 0x5a, 0x9f, 0xd7, 0xb0, 0x34, 0x1b, 0x5a, 0x68, 0xab,
+	0xe1, 0x88, 0xc1, 0xb9, 0x3d, 0x1f, 0xa0, 0xe9, 0xce, 0x00, 0xca, 0x99, 0x82, 0x1e, 0xd6, 0xf1,
+	0xd6, 0x7c, 0x1b, 0x04, 0x8b, 0x20, 0x25, 0x69, 0xd9, 0xa6, 0x36, 0xa9, 0x35, 0x83, 0x6c, 0x52,
+	0xbb, 0xcb, 0x05, 0x69, 0xd9, 0xc0, 0x36, 0xa9, 0x35, 0x01, 0x6c, 0x52, 0xbb, 0xff, 0x05, 0x69,
+	0xd9, 0x3b, 0x36, 0xa9, 0xd5, 0xaa, 0x36, 0x69, 0x43, 0xeb, 0xbd, 0x87, 0xff, 0xaa, 0xd6, 0x46,
+	0x3b, 0xcd, 0x92, 0x19, 0x86, 0x1d, 0xec, 0x2e, 0x06, 0x95, 0xd4, 0x55, 0xff, 0xd9, 0xd4, 0x0d,
+	0xbd, 0x60, 0x53, 0x37, 0x59, 0xf8, 0x60, 0xfd, 0xc3, 0xea, 0xb0, 0xfa, 0x53, 0x72, 0xd1, 0x95,
+	0xb3, 0xf8, 0xd9, 0xaf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x54, 0x7c, 0x5d, 0xe0, 0xab, 0x08, 0x00,
+	0x00,
 }

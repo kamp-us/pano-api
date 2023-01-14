@@ -14,9 +14,10 @@ service PanoAPI {
   rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse);
   rpc DeletePost(DeletePostRequest) returns (DeletePostResponse);  
 
-  // rpc GetBatchUpvote(GetBatchUpvoteRequest) returns (GetBatchUpvoteResponse);
-  // rpc CreateUpvote(CreateUpvoteRequest) returns (CreateUpvoteResponse);
-  // rpc DeleteUpvote(DeleteUpvoteRequest) returns (DeleteUpvoteResponse);
+  rpc GetUpvotes(GetUpvotesRequest) returns (GetUpvotesResponse);
+
+  rpc CreateUpvote(CreateUpvoteRequest) returns (CreateUpvoteResponse);
+  rpc DeleteUpvote(DeleteUpvoteRequest) returns (DeleteUpvoteResponse);
 }
 
 // Post Start
@@ -73,19 +74,36 @@ message DeletePostRequest {
 message DeletePostResponse {}
 
 // Upvote Start
-/*message Upvote {
-  string ID = 1;
-  string postID = 2;
-  string userID = 3;
-  google.protobuf.Timestamp createdAt = 4;
+message Upvote {
+  string id = 1;
+  string entity_id = 2;
+  string entity_type = 3;
+  string user_id = 4;
+}
+
+message GetUpvotesRequest {
+  string entity_id = 1;
+  string entity_type = 2;
+}
+
+message GetUpvotesResponse {
+  repeated Upvote upvotes = 1;
 }
 
 message CreateUpvoteRequest {
-  string postID = 1;
-  string userID = 2;
+  string entity_id = 1;
+  string entity_type = 2;
+  string user_id = 3;
+}
+
+message CreateUpvoteResponse {
+  Upvote upvote = 1;
 }
 
 message DeleteUpvoteRequest {
-  string postID = 1;
-  string userID = 2;
-}*/
+  string entity_id = 1;
+  string entity_type = 2;
+  string user_id = 3;
+}
+
+message DeleteUpvoteResponse {}
