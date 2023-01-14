@@ -15,5 +15,6 @@ type Backender interface {
 	DeletePost(ctx context.Context, id string) error
 
 	// Upvote
+	GetUpvotes(ctx context.Context, entityId string, entityType string) ([]*models.Upvote, error)
 	CreateUpvote(ctx context.Context, entityId string, entityType string, userId string) (*models.Upvote, error)
 }
