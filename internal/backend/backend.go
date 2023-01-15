@@ -18,4 +18,5 @@ type Backender interface {
 	GetUpvotes(ctx context.Context, entityId string, entityType string) ([]*models.Upvote, error)
 	CreateUpvote(ctx context.Context, entityId string, entityType string, userId string) (*models.Upvote, error)
 	DeleteUpvote(ctx context.Context, entityId string, entityType string, userId string) error
+	IsUpvoted(ctx context.Context, entityId string, entityType string, userId string) (*bool, error)
 }
