@@ -7,6 +7,7 @@ import "google/protobuf/wrappers.proto";
 // import "google/protobuf/timestamp.proto";
 
 service PanoAPI {
+  // Post
   rpc GetBatchPosts(GetBatchPostsRequest) returns (GetBatchPostsResponse);
   rpc GetPosts(GetPostsRequest) returns (GetPostsResponse);
 
@@ -14,10 +15,14 @@ service PanoAPI {
   rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse);
   rpc DeletePost(DeletePostRequest) returns (DeletePostResponse);  
 
+
+  // Upvote
   rpc GetUpvotes(GetUpvotesRequest) returns (GetUpvotesResponse);
 
   rpc CreateUpvote(CreateUpvoteRequest) returns (CreateUpvoteResponse);
   rpc DeleteUpvote(DeleteUpvoteRequest) returns (DeleteUpvoteResponse);
+
+  rpc IsUpvoted(IsUpvotedRequest) returns (IsUpvotedResponse);
 }
 
 // Post Start
@@ -107,3 +112,13 @@ message DeleteUpvoteRequest {
 }
 
 message DeleteUpvoteResponse {}
+
+message IsUpvotedRequest {
+  string entity_id = 1;
+  string entity_type = 2;
+  string user_id = 3;
+}
+
+message IsUpvotedResponse {
+  bool is_upvoted = 1;
+}
