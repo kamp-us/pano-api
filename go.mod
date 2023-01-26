@@ -3,9 +3,9 @@ module github.com/kamp-us/pano-api
 go 1.19
 
 require (
+	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
 	github.com/gosimple/slug v1.13.1
-	github.com/joho/godotenv v1.4.0
 	github.com/twitchtv/twirp v8.1.3+incompatible
 	google.golang.org/protobuf v1.28.1
 	gorm.io/driver/postgres v1.4.6

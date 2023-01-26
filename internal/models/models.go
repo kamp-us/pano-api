@@ -1,9 +1,13 @@
 package models
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
+
+// TODO: ask about indexing
 
 type Post struct {
 	ID      uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
@@ -15,10 +19,21 @@ type Post struct {
 	UserID string
 }
 
-type Upvote struct {
+type Comment struct {
 	ID      uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	Content string
+
+	UserID   string
+	PostID   string
+	ParentID string
+
+	DeletedAt time.Time
+}
+
+type Upvote struct {
+	ID         uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
 	EntityID   string
-	EntityType     string
+	EntityType string
 
 	UserID string
 }
@@ -29,8 +44,14 @@ func AutoMigrate(db *gorm.DB) error {
 	if err := db.AutoMigrate(&Post{}); err != nil {
 		return err
 	}
+
+	if err := db.AutoMigrate(&Comment{}); err != nil {
+		return err
+	}
+
 	if err := db.AutoMigrate(&Upvote{}); err != nil {
 		return err
 	}
+
 	return nil
 }
